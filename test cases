@@ -1,0 +1,94 @@
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+
+public class UserInyerfaceTests 
+{
+    private IWebDriver driver;
+
+    [SetUp]
+    public void Setup() 
+    {
+        driver = new ChromeDriver();
+    }
+
+    [Test]
+    public void HelpFormTest() 
+    {
+        BaseForm mainPage = new BaseForm(driver, "https://userinyerface.com/");
+        mainPage.Navigate();
+
+        BaseElement hereLink = mainPage.FindElement(By.LinkText("Here"));
+        hereLink.Click();
+
+        Button helpButton = new Button(driver, By.Id("btnHelp"));
+        helpButton.Click();
+
+        Assert.IsTrue(driver.PageSource.Contains("Help response"));
+    }
+
+    [Test]
+    public void TimerTest() 
+    {
+        BaseElement timer = new BaseElement(driver, By.Id("timer"));
+        BaseForm mainPage = new BaseForm(driver, "https://userinyerface.com/");
+        mainPage.Navigate();
+
+        BaseElement hereLink = mainPage.FindElement(By.LinkText("Here"));
+        hereLink.Click();
+
+        Assert.AreEqual("00:00", timer.Text);
+    }
+
+    [Test]
+    public void ValidPasswordTest() 
+    {
+        BaseForm mainPage = new BaseForm(driver, "https://userinyerface.com/");
+        mainPage.Navigate();
+
+        BaseElement hereLink = mainPage.FindElement(By.LinkText("Here"));
+        hereLink.Click();
+
+        BaseElement emailField = new BaseElement(driver, By.Id("inputEmail"));
+        BaseElement passwordField = new BaseElement(driver, By.Id("inputPassword"));
+        BaseElement termsCheckbox = new BaseElement(driver, By.Id("inputCheckbox"));
+        Button nextButton = new Button(driver, By.Id("btnNext"));
+
+        emailField.SendKeys("test@example.com");
+        passwordField.SendKeys("validpassword");
+        termsCheckbox.Click();
+        nextButton.Click();
+
+        BaseElement secondCard = new BaseElement(driver, By.Id("secondCard"));
+        Assert.IsTrue(secondCard.Displayed);
+    }
+
+    [Test]
+    public void InvalidPasswordTest() 
+    {
+        BaseForm mainPage = new BaseForm(driver, "https://userinyerface.com/");
+        mainPage.Navigate();
+
+        BaseElement hereLink = mainPage.FindElement(By.LinkText("Here"));
+        hereLink.Click();
+
+        BaseElement emailField = new BaseElement(driver, By.Id("inputEmail"));
+        BaseElement passwordField = new BaseElement(driver, By.Id("inputPassword"));
+        BaseElement termsCheckbox = new BaseElement(driver, By.Id("inputCheckbox"));
+        Button nextButton = new Button(driver, By.Id("btnNext"));
+
+        emailField.SendKeys("test@example.com");
+        passwordField.SendKeys("invalidpassword");
+        termsCheckbox.Click();
+        nextButton.Click();
+
+        BaseElement secondCard = new BaseElement(driver, By.Id("secondCard"));
+        Assert.IsFalse(secondCard.Displayed);
+    }
+
+    [TearDown]
+    public void Teardown() 
+    {
+        driver.Quit();
+    }
+}
